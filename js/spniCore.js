@@ -84,6 +84,7 @@ var jsErrors = [];
 var sessionID = '';
 var gameID = '';
 var generalCollectibles = [];
+var generalCollectibleCases = new Map();
 var isLocal = false;
 var isMainSite = true;
 

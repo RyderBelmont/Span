@@ -402,14 +402,66 @@ function changeCharacterFilter (collectibleScreen) {
 
 function loadGeneralCollectibles () {
     return metadataIndex.getFile('opponents/general_collectibles.xml').then(function($xml) {
+        humanPlayer.collectibles = generalCollectibles;
         $xml.children('collectible').each(function (idx, elem) {
             generalCollectibles.push(new Collectible($(elem), undefined));
+        });
+        $xml.children('case:not([disabled="1"])').each(function (idx, elem) {
+            const trigger = $(elem).attr('trigger');
+            $(elem).attr('hidden', 'true');
+            const c = new Case($(elem), trigger);
+            if (!generalCollectibleCases.has(trigger)) {
+                generalCollectibleCases.set(trigger, []);
+            }
+            generalCollectibleCases.get(trigger).push(c);
         });
     }).catch(function (err) {
         console.error("Failed to load general collectibles");
         captureError(err);
     });
 }
+
+function evaluateGeneralCollectibleCases (triggers, target) {
+    const cases = [];
+    if (!Array.isArray(triggers)) {
+        triggers = [triggers];
+    } else {
+        triggers = triggers.flat();
+    }
+    if (triggers[0] !== DEALING_CARDS) {
+        triggers.push(GLOBAL_CASE);
+    }
+    triggers.forEach(function (trigger) {
+        cases.push(...(generalCollectibleCases.get(trigger) || []));
+    });
+
+    if (cases.length <= 0) return;
+
+    /* Sort hidden cases in order of descending custom priority. */
+    cases.sort(function (a, b) {
+        return b.priority - a.priority;
+    });
+
+    cases.forEach(function (c) {
+        if (c.checkConditions(humanPlayer, target)) {
+            humanPlayer.applyHiddenStates(c, target);
+        }
+    });
+
+    if (humanPlayer.pendingCollectiblePopups.length) {
+        $('#collectible-button-0').show();
+    }
+}
+
+function onGeneralCollectibleIndicatorClick () {
+    if (humanPlayer.pendingCollectiblePopups.length == 0) return;
+    humanPlayer.pendingCollectiblePopups.shift().displayInfoModal();
+
+    if (humanPlayer.pendingCollectiblePopups.length == 0) {
+        $('#collectible-button-0').hide();
+    }
+}
+$('#collectible-button-0').click(onGeneralCollectibleIndicatorClick);
 
 function loadAllCollectibles() {
     console.log("Loading all collectibles");

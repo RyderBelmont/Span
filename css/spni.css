@@ -460,7 +460,7 @@ input[type=search]::-webkit-search-cancel-button {
 .game-menu-dropup {
     position: absolute;
     left: 1%;
-    bottom: 5%;
+    bottom: 3%;
 
     width: 7%;
     height: 8%;
@@ -4908,6 +4908,12 @@ ul.dropdown-menu>li {
     width: 22rem;
     top: 65%;
     margin: 0 1.5rem;
+}
+.collectible-button-container.general {
+    top: auto;
+    bottom: 16%;
+    left: 1%;
+    margin-left: 0;
 }
 
 .collectible-button {

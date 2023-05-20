@@ -1,3 +1,4 @@
 <collectibles>
     <!-- Add generic collectibles here. Same format as per-opponent Collectibles. -->
+    <!-- Also add cases to unlock the collectibles, but with trigger attribues instead of elements -->
 </collectibles>
